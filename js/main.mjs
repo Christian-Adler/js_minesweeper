@@ -54,12 +54,22 @@ canvas.addEventListener("mouseout", () => {
   canvasMousePos.set(-1, -1);
   mouseDown = false;
 });
-canvas.addEventListener("mousedown", () => mouseDown = true);
+canvas.addEventListener("mousedown", (evt) => {
+  if (evt.button === 2)
+    return;
+  mouseDown = true;
+});
 canvas.addEventListener("mouseup", () => {
   if (!mouseDown)
     return;
   mouseDown = false;
   world.clickTile();
+});
+canvas.addEventListener("contextmenu", (evt) => {
+  evt.preventDefault();
+  mouseDown = false;
+  world.flagTile();
+  return false;
 });
 
 const update = () => {

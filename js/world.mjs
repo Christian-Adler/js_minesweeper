@@ -19,6 +19,8 @@ class World {
 
     this.numBombs = 0;
     this.amountBombs = LITTLE;
+
+    this.failed = false;
   }
 
   setWorldDimension(worldWidth, worldHeight) {
@@ -36,6 +38,7 @@ class World {
     if (this.tiles.length > 0) {
       console.log('clear old game');
       this.tiles = [];
+      this.failed = false;
     }
     for (let y = 0; y < this.yTilesCount; y++) {
       for (let x = 0; x < this.xTilesCount; x++) {
@@ -127,12 +130,57 @@ class World {
       this.tileHovered = this.tiles[tileIdx];
   }
 
+  #countClickedTiles() {
+    return this.tiles.filter(t => t.clicked).length
+  }
+
+  #countFlaggedTiles() {
+    return this.tiles.filter(t => t.flagged).length
+  }
+
   clickTile() {
     const tile = this.tileHovered;
     if (tile) {
+      if (!tile.bomb && tile.bombNeighbours === 0)
+        this.#openAllNeighbors(tile);
+
       tile.clicked = true;
-      if (tile.bomb)
-        console.log('FAIL'); // TODO
+      if (tile.bomb) {
+        this.failed = true;
+        console.log('FAIL');
+      } // TODO
+
+
+    }
+    console.log('clicked', this.#countClickedTiles());
+  }
+
+  flagTile() {
+    const tile = this.tileHovered;
+    if (tile) {
+      tile.flaged = !tile.flaged;
+      this.numFlags += tile.flaged ? 1 : -1;
+      // console.log('num flags', this.numFlags);
+    }
+  }
+
+  #openAllNeighbors(tile) {
+    let tileIdx = tile.pos.x + tile.pos.y * this.xTilesCount;
+    const workList = [tileIdx];
+
+    while (workList.length > 0) {
+      tileIdx = workList.pop();
+      const t = this.tiles[tileIdx];
+
+      if (t.bombNeighbours === 0) {
+        const neighborIdxS = this.#getNeighbors(tileIdx);
+        for (const neighborIdx of neighborIdxS) {
+          const n = this.tiles[neighborIdx];
+          if (!n.clicked)
+            workList.push(neighborIdx);
+        }
+      }
+      t.clicked = true;
     }
   }
 
@@ -143,7 +191,7 @@ class World {
     // ctx.rect(0, 0, this.width, this.height);
     // ctx.stroke();
 
-    const forceShow = false;
+    const forceShow = this.failed;
     for (const tile of this.tiles) {
       tile.draw(ctx, forceShow, tile.equals(this.tileHovered), this.mouseDown);
     }
