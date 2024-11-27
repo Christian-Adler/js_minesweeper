@@ -32,7 +32,7 @@ const updateWorldSettings = () => {
     windowWidth = window.innerWidth;
     windowHeight = window.innerHeight;
     const worldWidthWouldBe = windowWidth - windowWidth % tileWidth;
-    const worldHeightWouldBe = windowHeight - 50 - (windowHeight - 50) % tileWidth;
+    const worldHeightWouldBe = windowHeight - 60 - (windowHeight - 60) % tileWidth;
     if (worldHeightWouldBe !== worldHeight || worldWidthWouldBe !== worldWidth) {
       worldWidth = worldWidthWouldBe;
       worldHeight = worldHeightWouldBe;

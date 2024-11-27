@@ -1,0 +1,177 @@
+* {
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    font-family: Arial, serif;
+}
+
+html, body {
+    height: 100vh;
+    width: 100vw;
+    position: relative;
+}
+
+body {
+    background: rgb(2, 0, 36);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: column;
+}
+
+#cmdBar {
+    align-content: center;
+    height: 60px;
+    width: 100vw;
+    overflow-x: auto;
+
+    & #cmdBarContent {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 10px;
+        min-width: fit-content;
+
+        & img {
+            height: 40px;
+            margin-left: 10px;
+        }
+
+        & .number {
+            font-size: 30px;
+            min-width: 20px;
+            width: fit-content;
+            color: white;
+            font-family: monospace;
+        }
+
+        & select {
+            font-size: 20px;
+            font-family: monospace;
+        }
+
+        & .spacer {
+            flex: 1;
+        }
+
+        #highScoreId {
+            width: 40px;
+            height: 30px;
+            background: url("./assets/images/trophy.png") no-repeat;
+            background-size: contain;
+            cursor: pointer;
+        }
+
+        #timerId {
+            border: 1px solid rgba(52, 52, 121, 1);
+            padding: 0 10px;
+            border-radius: 5px;
+        }
+
+        & #resetGameId {
+            display: inline-block;
+            transform: rotate(90deg);
+            margin-right: 10px;
+            cursor: pointer;
+            user-select: none;
+
+            &:hover {
+                color: lightblue;
+            }
+        }
+    }
+}
+
+canvas {
+    /*cursor: none;*/
+    background: linear-gradient(302deg, rgba(52, 52, 121, 1) 0%, rgba(93, 188, 208, 1) 100%);
+}
+
+#overlay {
+    position: fixed;
+    display: flex;
+    pointer-events: none;
+    height: 100vh;
+    width: 100vw;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+
+    & .overlayText {
+        font-size: 20vh;
+        height: 20vh;
+        font-family: Arial, sans-serif;
+        font-weight: bold;
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out;
+        text-shadow: 5px 5px 1px #000000, 2px 2px 10px #000000;
+        text-align: center;
+    }
+
+    &.looser {
+        & .overlayText {
+            opacity: 0.5;
+            color: red;
+
+            &::before {
+                content: "LOOSER";
+            }
+        }
+    }
+
+    &.winner {
+        & .overlayText {
+            opacity: 0.5;
+            color: lawngreen;
+
+            &::before {
+                content: "WINNER";
+            }
+
+        }
+    }
+}
+
+#highScoreContainerId {
+    position: fixed;
+    top: 110vh;
+    opacity: 0;
+    width: fit-content;
+    height: fit-content;
+    max-height: calc(100vh - 134px);
+    max-width: 1000px;
+    overflow: auto;
+    border-radius: 30px 0 0 10px;
+    border: 1px solid white;
+    background-color: rgba(52, 52, 121, 1);
+    background-image: url("./assets/images/trophy.png");
+    background-size: 40px;
+    background-repeat: no-repeat;
+    background-position: center 5px;
+    color: white;
+    box-shadow: 0 0 10px rgba(52, 52, 121, 1);
+    padding: 50px 10px 10px 10px;
+    transition: all 0.5s ease-in-out;
+
+    &.show {
+        top: 60px;
+        opacity: 1;
+    }
+
+    & table {
+        & th, td {
+            text-align: left;
+            padding: 5px 15px;
+
+            &:first-child {
+                text-align: right;
+            }
+
+            &:last-child {
+                text-align: right;
+            }
+        }
+    }
+}

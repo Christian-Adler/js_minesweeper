@@ -1,16 +1,14 @@
 import {Tile, tileWidth} from "./tile.mjs";
 import {Vector} from "./util/vector.mjs";
 import {getRandomIntInclusive, sanitize, toMinutesSecondsString} from "./util/utils.mjs";
-import {addToHighScore, showHighScore} from "./highscore.mjs";
+import {addToHighScore, hideHighScore, showHighScore} from "./highscore.mjs";
+import {difficulties, registerDifficultyListener} from "./difficulty.mjs";
 
 const displayNumMines = document.querySelector("#numMinesId");
 const displayNumFlags = document.querySelector("#numFlagsId");
 const overlay = document.querySelector("#overlay");
 const timer = document.querySelector("#timerId");
 
-const LITTLE = 0.1;
-const MEDIUM = 0.2;
-const A_LOT = 0.3;
 
 class World {
   constructor() {
@@ -24,13 +22,20 @@ class World {
     this.mouseDown = false;
 
     this.numBombs = 0;
-    this.amountBombs = LITTLE;
+    this.difficultyFactor = difficulties.MIN;
 
     this.failed = false;
     this.finished = false;
 
     this.startTime = -1;
     this.endTime = -1;
+
+    registerDifficultyListener(this.setDifficulty.bind(this));
+  }
+
+  setDifficulty(difficulty) {
+    this.difficultyFactor = Math.max(Math.min(difficulty, difficulties.MAX), difficulties.MIN);
+    this.reSet();
   }
 
   setWorldDimension(worldWidth, worldHeight) {
@@ -45,9 +50,11 @@ class World {
   }
 
   reSet() {
+    hideHighScore();
     if (this.tiles.length > 0) {
       this.startTime = -1;
       this.endTime = -1;
+      displayNumFlags.innerText = '0';
       timer.innerText = '0:00';
       overlay.classList.remove('looser', 'winner');
       this.tiles = [];
@@ -61,7 +68,7 @@ class World {
       }
     }
 
-    this.numBombs = Math.floor(this.tiles.length * this.amountBombs);
+    this.numBombs = Math.floor(this.tiles.length * this.difficultyFactor);
     displayNumMines.innerText = this.numBombs;
     for (let i = 0; i < this.numBombs; i++) {
       this.#placeRandomBomb();
