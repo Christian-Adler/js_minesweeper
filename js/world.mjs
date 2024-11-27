@@ -5,6 +5,7 @@ import {getRandomIntInclusive} from "./util/utils.mjs";
 const displayNumMines = document.querySelector("#numMinesId");
 const displayNumFlags = document.querySelector("#numFlagsId");
 const overlay = document.querySelector("#overlay");
+const timer = document.querySelector("#timerId");
 
 const LITTLE = 0.1;
 const MEDIUM = 0.2;
@@ -26,6 +27,9 @@ class World {
 
     this.failed = false;
     this.finished = false;
+
+    this.startTime = -1;
+    this.endTime = -1;
   }
 
   setWorldDimension(worldWidth, worldHeight) {
@@ -42,6 +46,9 @@ class World {
   reSet() {
     if (this.tiles.length > 0) {
       console.log('clear old game');
+      this.startTime = -1;
+      this.endTime = -1;
+      timer.innerText = '0:00';
       overlay.classList.remove('looser', 'winner');
       this.tiles = [];
       this.failed = false;
@@ -146,7 +153,13 @@ class World {
     return this.tiles.filter(t => t.flagged).length
   }
 
+  #startTimer() {
+    if (this.startTime < 0)
+      this.startTime = new Date().getTime();
+  }
+
   clickTile() {
+    this.#startTimer();
     const tile = this.tileHovered;
     if (tile) {
       if (!tile.bomb && tile.bombNeighbours === 0)
@@ -154,9 +167,11 @@ class World {
 
       tile.clicked = true;
       if (tile.bomb) {
+        this.endTime = new Date().getTime();
         this.failed = true;
         overlay.classList.add('looser');
       } else if (this.tiles.length - this.#countClickedTiles() === this.numBombs) {
+        this.endTime = new Date().getTime();
         this.finished = true;
         overlay.classList.add('winner');
       }
@@ -164,6 +179,7 @@ class World {
   }
 
   flagTile() {
+    this.#startTimer();
     const tile = this.tileHovered;
     if (tile)
       tile.flagged = !tile.flagged;
@@ -195,6 +211,13 @@ class World {
     const forceShow = this.failed || this.finished;
     for (const tile of this.tiles) {
       tile.draw(ctx, forceShow, tile.equals(this.tileHovered), this.mouseDown);
+    }
+
+    if (this.startTime > 0) {
+      const time = (this.endTime > 0 ? (this.endTime - this.startTime) : (new Date().getTime() - this.startTime)) / 1000;
+      const minutes = Math.floor(time / 60);
+      const seconds = Math.floor(time - minutes * 60);
+      timer.innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
     }
   }
 }
