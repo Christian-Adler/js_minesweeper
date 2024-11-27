@@ -1,4 +1,5 @@
 import {imgFlag, imgMine} from "./mine.mjs";
+import {scale} from "./util/utils.mjs";
 
 const tileWidth = 30;
 const tileWidth2 = tileWidth / 2;
@@ -64,7 +65,9 @@ class Tile {
       ctx.font = "20px sans-serif";
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillStyle = 'green';
+      ctx.fillStyle = `hsl(${0 + scale(8 - this.bombNeighbours, 1, 8, 0, 150)},30%,50%)`;
+      ctx.fillText(`${this.bombNeighbours}`, this.pos.x * tileWidth + tileWidth2 + 1, this.pos.y * tileWidth + tileWidth2 + 2 + 1);
+      ctx.fillStyle = `hsl(${0 + scale(8 - this.bombNeighbours, 1, 8, 0, 150)},100%,50%)`;
       ctx.fillText(`${this.bombNeighbours}`, this.pos.x * tileWidth + tileWidth2, this.pos.y * tileWidth + tileWidth2 + 2);
     }
   }
