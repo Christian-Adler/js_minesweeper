@@ -16,7 +16,7 @@ let worldHeight2 = worldHeight / 2;
 let canvasBoundingClientRect = canvas.getBoundingClientRect();
 let worldUpdated = true;
 
-const updateWorldSettings = (force) => {
+const updateWorldSettings = () => {
   if (windowHeight !== window.innerHeight || windowWidth !== window.innerWidth || force) {
     windowWidth = window.innerWidth;
     windowHeight = window.innerHeight;
@@ -37,7 +37,7 @@ const updateWorldSettings = (force) => {
 };
 
 updateWorldSettings();
-document.addEventListener("load", () => updateWorldSettings(true));
+document.addEventListener("load", () => updateWorldSettings());
 
 let canvasMousePos = new Vector(-1, -1);
 let mouseDown = false;
@@ -56,28 +56,23 @@ canvas.addEventListener("mouseout", () => {
 });
 canvas.addEventListener("mousedown", () => mouseDown = true);
 canvas.addEventListener("mouseup", () => {
-  if (!mouseDown) return;
+  if (!mouseDown)
+    return;
   mouseDown = false;
   world.clickTile();
 });
 
 const update = () => {
 
-  ctx.fillStyle = "white";
-  ctx.strokeStyle = "white";
-  ctx.lineWidth = 1;
-
   if (worldUpdated)
     worldUpdated = false;
 
   world.update(canvasMousePos, mouseDown);
 
-
   ctx.clearRect(0, 0, worldWidth, worldHeight);
 
   ctx.save();
   ctx.translate(0.5, 0.5);
-
 
   world.draw(ctx);
 

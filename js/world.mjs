@@ -1,5 +1,10 @@
 import {Tile, tileWidth} from "./tile.mjs";
 import {Vector} from "./util/vector.mjs";
+import {getRandomIntInclusive} from "./util/utils.mjs";
+
+const LITTLE = 0.1;
+const MEDIUM = 0.2;
+const A_LOT = 0.3;
 
 class World {
   constructor() {
@@ -11,6 +16,9 @@ class World {
     this.tiles = [];
     this.tileHovered = null;
     this.mouseDown = false;
+
+    this.numBombs = 0;
+    this.amountBombs = LITTLE;
   }
 
   setWorldDimension(worldWidth, worldHeight) {
@@ -20,15 +28,12 @@ class World {
     this.xTilesCount = worldWidth / tileWidth;
     this.yTilesCount = worldHeight / tileWidth;
 
-    if (reset) {
-      // TODO reset
-      console.log('reset');
-      this.reset();
-    }
+    if (reset)
+      this.#reSet();
   }
 
-  reset() {
-    if (!this.tiles.length > 0) {
+  #reSet() {
+    if (this.tiles.length > 0) {
       console.log('clear old game');
       this.tiles = [];
     }
@@ -38,6 +43,76 @@ class World {
         this.tiles.push(new Tile(vec));
       }
     }
+
+    this.numBombs = this.tiles.length * this.amountBombs;
+    for (let i = 0; i < this.numBombs; i++) {
+      this.#placeRandomBomb();
+    }
+
+    for (let i = 0; i < this.tiles.length; i++) {
+      const tile = this.tiles[i];
+      tile.bombNeighbours = this.#countBombNeighbors(i, false);
+    }
+  }
+
+  #placeRandomBomb() {
+    let foundBombPos = false;
+    while (!foundBombPos) {
+      const idx = getRandomIntInclusive(0, this.tiles.length - 1);
+      const tile = this.tiles[idx];
+      if (!tile.bomb) {
+        const bombNeighbors = this.#countBombNeighbors(idx, true);
+        if (bombNeighbors < 8) {
+          tile.bomb = true;
+          foundBombPos = true;
+        }
+      }
+    }
+  }
+
+  #countBombNeighbors(idx, countWall) {
+    const neighborsIdxS = this.#getNeighbors(idx);
+    let bombCount = countWall ? (8 - neighborsIdxS.length) : 0; // if outside of world it also counts as bomb neighbor
+    for (const neighborsIdx of neighborsIdxS) {
+      if (this.tiles[neighborsIdx].bomb)
+        bombCount++;
+    }
+    return bombCount;
+  }
+
+  #getNeighbors(idx) {
+    const neighborsIdxS = [];
+
+    const isOnLeftBorder = idx % this.xTilesCount === 0;
+    const isOnRightBorder = idx % this.xTilesCount === this.xTilesCount - 1;
+    const isOnTopBorder = idx < this.xTilesCount;
+    const isOnBottomBorder = idx >= this.tiles.length - this.xTilesCount;
+
+    // const neighborsIdxS = [
+    //   // idx - this.xTilesCount - 1, idx - this.xTilesCount, idx - this.xTilesCount + 1,
+    //   // idx - 1, idx + 1,
+    //   // idx + this.xTilesCount - 1, idx + this.xTilesCount, idx + this.xTilesCount + 1
+    // ];
+    if (!isOnTopBorder) {
+      if (!isOnLeftBorder)
+        neighborsIdxS.push(idx - this.xTilesCount - 1);
+      neighborsIdxS.push(idx - this.xTilesCount);
+      if (!isOnRightBorder)
+        neighborsIdxS.push(idx - this.xTilesCount + 1);
+    }
+    if (!isOnLeftBorder)
+      neighborsIdxS.push(idx - 1);
+    if (!isOnRightBorder)
+      neighborsIdxS.push(idx + 1);
+    if (!isOnBottomBorder) {
+      if (!isOnLeftBorder)
+        neighborsIdxS.push(idx + this.xTilesCount - 1);
+      neighborsIdxS.push(idx + this.xTilesCount);
+      if (!isOnRightBorder)
+        neighborsIdxS.push(idx + this.xTilesCount + 1);
+    }
+
+    return neighborsIdxS;
   }
 
   update(mousePos, mouseDown) {
