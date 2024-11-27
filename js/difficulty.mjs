@@ -1,16 +1,18 @@
-export const difficulties = {
-  MIN: 0.1,
-  MEDIUM: 0.2,
-  MAX: 0.3
-};
+export const difficulties = [
+  {val: 0.1, name: "MIN"},
+  {val: 0.2, name: "MEDIUM"},
+  {val: 0.3, name: "MAX"},
+];
 
 const keyDifficulty = 'difficulty'
 
 const selectDifficulty = document.querySelector("#difficultyId");
 
-let difficulty = difficulties.MIN;
+let difficulty = difficulties[0];
 
 const listeners = [];
+
+export const getDifficulty = () => difficulty;
 
 const notifyListeners = () => {
   for (const listener of listeners) {
@@ -18,19 +20,18 @@ const notifyListeners = () => {
   }
 };
 
-const storeDifficulty = (value) => {
-  difficulty = value;
-  localStorage.setItem(keyDifficulty, `${value}`);
+const storeDifficulty = (d) => {
+  difficulty = d;
+  localStorage.setItem(keyDifficulty, `${d.name}`);
   notifyListeners();
 };
 
 const loadDifficulty = () => {
-  let val = localStorage.getItem(keyDifficulty);
-  if (val && val.length > 0)
-    val = parseFloat(val);
-  if (val < difficulties.MIN || val > difficulties.MAX)
-    val = difficulties.MIN;
-  return val;
+  const name = localStorage.getItem(keyDifficulty);
+  let d = difficulties.find((d) => d.name === name);
+  if (!d)
+    d = difficulties[0];
+  return d;
 };
 
 export const registerDifficultyListener = (listener) => {
@@ -38,26 +39,20 @@ export const registerDifficultyListener = (listener) => {
   notifyListeners();
 };
 
-// <option value="MIN">Min</option>
-// <option value="MEDIUM">Medium</option>
-// <option value="MAX">Max</option>
-
 (() => {
   difficulty = loadDifficulty();
   notifyListeners();
   let selectOptions = '';
-  for (const key of Object.keys(difficulties)) {
-    const value = difficulties[key];
-    const selected = value === difficulty;
-    selectOptions += `<option value="${key}" ${selected ? 'selected' : ''}>${key}</option>`;
+  for (const d of difficulties) {
+    const selected = d.name === difficulty.name;
+    selectOptions += `<option value="${d.name}" ${selected ? 'selected' : ''}>${d.name}</option>`;
   }
   selectDifficulty.innerHTML = selectOptions;
 
   selectDifficulty.addEventListener('change', (evt) => {
-    const selected = evt.target.value;
-    for (const key of Object.keys(difficulties)) {
-      if (key === selected)
-        storeDifficulty(difficulties[key]);
-    }
+    const dName = evt.target.value;
+    const d = difficulties.find((d) => d.name === dName);
+    if (d)
+      storeDifficulty(d);
   });
 })();

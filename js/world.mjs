@@ -34,7 +34,7 @@ class World {
   }
 
   setDifficulty(difficulty) {
-    this.difficultyFactor = Math.max(Math.min(difficulty, difficulties.MAX), difficulties.MIN);
+    this.difficultyFactor = difficulty.val;
     this.reSet();
   }
 
@@ -166,6 +166,8 @@ class World {
   }
 
   clickTile() {
+    if (this.finished || this.failed)
+      return;
     this.#startTimer();
     const tile = this.tileHovered;
     if (tile) {
@@ -196,6 +198,9 @@ class World {
   }
 
   flagTile() {
+    if (this.finished || this.failed)
+      return;
+    
     this.#startTimer();
     const tile = this.tileHovered;
     if (tile)
