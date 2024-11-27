@@ -175,6 +175,7 @@ class World {
         this.#openAllNeighbors(tile);
 
       tile.clicked = true;
+      tile.flagged = false;
       if (tile.bomb) {
         this.endTime = new Date().getTime();
         this.failed = true;
@@ -195,12 +196,13 @@ class World {
           showHighScore(this.numBombs);
       }
     }
+    displayNumFlags.innerText = this.#countFlaggedTiles();
   }
 
   flagTile() {
     if (this.finished || this.failed)
       return;
-    
+
     this.#startTimer();
     const tile = this.tileHovered;
     if (tile)
@@ -226,7 +228,9 @@ class World {
         }
       }
       t.clicked = true;
+      t.flagged = false;
     }
+    displayNumFlags.innerText = this.#countFlaggedTiles();
   }
 
   draw(ctx) {
