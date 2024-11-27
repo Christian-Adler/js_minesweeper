@@ -37,4 +37,16 @@ const scale = (number, inMin, inMax, outMin, outMax) => {
   return (number - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
 }
 
-export {lerp, lerpVec, getRandomIntInclusive, rad2deg, deg2rad, scale}
+const toMinutesSecondsString = (timeInS) => {
+  const minutes = Math.floor(timeInS / 60);
+  const seconds = Math.floor(timeInS - minutes * 60);
+  return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+}
+
+const sanitize = (input) => {
+  const decoder = document.createElement('div');
+  decoder.innerHTML = input;
+  return decoder.textContent;
+}
+
+export {lerp, lerpVec, getRandomIntInclusive, rad2deg, deg2rad, scale, toMinutesSecondsString, sanitize}

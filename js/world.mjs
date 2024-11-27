@@ -1,6 +1,7 @@
 import {Tile, tileWidth} from "./tile.mjs";
 import {Vector} from "./util/vector.mjs";
-import {getRandomIntInclusive} from "./util/utils.mjs";
+import {getRandomIntInclusive, sanitize, toMinutesSecondsString} from "./util/utils.mjs";
+import {addToHighScore, showHighScore} from "./highscore.mjs";
 
 const displayNumMines = document.querySelector("#numMinesId");
 const displayNumFlags = document.querySelector("#numFlagsId");
@@ -45,7 +46,6 @@ class World {
 
   reSet() {
     if (this.tiles.length > 0) {
-      console.log('clear old game');
       this.startTime = -1;
       this.endTime = -1;
       timer.innerText = '0:00';
@@ -174,6 +174,16 @@ class World {
         this.endTime = new Date().getTime();
         this.finished = true;
         overlay.classList.add('winner');
+
+        let user = null;
+        while (typeof user !== 'string' || user.length === 0) {
+          user = sanitize(prompt("Please enter your name", localStorage.getItem('user') || "User"));
+        }
+        localStorage.setItem('user', user);
+
+        const newHighScore = addToHighScore(this.numBombs, user, this.endTime - this.startTime);
+        if (newHighScore)
+          showHighScore(this.numBombs);
       }
     }
   }
@@ -215,9 +225,7 @@ class World {
 
     if (this.startTime > 0) {
       const time = (this.endTime > 0 ? (this.endTime - this.startTime) : (new Date().getTime() - this.startTime)) / 1000;
-      const minutes = Math.floor(time / 60);
-      const seconds = Math.floor(time - minutes * 60);
-      timer.innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+      timer.innerText = toMinutesSecondsString(time);
     }
   }
 }

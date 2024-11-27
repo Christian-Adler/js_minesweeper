@@ -49,8 +49,16 @@
                 flex: 1;
             }
 
+            #highScoreId {
+                width: 40px;
+                height: 30px;
+                background: url("./assets/images/trophy.png") no-repeat;
+                background-size: contain;
+                cursor: pointer;
+            }
+
             #timerId {
-                border: 1px solid #35377b;
+                border: 1px solid rgba(52, 52, 121, 1);
                 padding: 0 10px;
                 border-radius: 5px;
             }
@@ -117,6 +125,48 @@
                 }
             }
         }
+
+        #highScoreContainerId {
+            position: fixed;
+            top: 110vh;
+            opacity: 0;
+            width: fit-content;
+            height: fit-content;
+            max-height: calc(100vh - 124px);
+            max-width: 1000px;
+            overflow: auto;
+            border-radius: 10px;
+            border: 1px solid white;
+            background-color: rgba(52, 52, 121, 1);
+            background-image: url("./assets/images/trophy.png");
+            background-size: 40px;
+            background-repeat: no-repeat;
+            background-position: center 5px;
+            color: white;
+            box-shadow: 0 0 10px rgba(52, 52, 121, 1);
+            padding: 50px 10px 10px 10px;
+            transition: all 0.5s ease-in-out;
+
+            &.show {
+                top: 60px;
+                opacity: 1;
+            }
+
+            & table {
+                & th, td {
+                    text-align: left;
+                    padding: 5px 15px;
+
+                    &:first-child {
+                        text-align: right;
+                    }
+
+                    &:last-child {
+                        text-align: right;
+                    }
+                }
+            }
+        }
     </style>
 </head>
 <body>
@@ -126,13 +176,15 @@
     <img id="imgFlagsId" src="" alt="flags">
     <div id="numFlagsId" class="number"></div>
     <div class="spacer"></div>
-    <div id="timerId" class="number"></div>
+    <div id="highScoreId"></div>
+    <div id="timerId" class="number">0:00</div>
     <div id="resetGameId" class="number">↻</div>
 </div>
 <canvas id="canvas" height="500" width="500"></canvas>
 <div id="overlay">
     <div class="overlayText"></div>
 </div>
+<div id="highScoreContainerId"></div>
 </body>
 <script src="js/main.mjs" type="module"></script>
 </html>

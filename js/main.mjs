@@ -2,6 +2,7 @@ import {tileWidth} from "./tile.mjs";
 import World from "./world.mjs";
 import {Vector} from "./util/vector.mjs";
 import {imgFlag, imgMine} from "./mine.mjs";
+import {hideHighScore} from "./highscore.mjs";
 
 document.querySelector('#imgMinesId').src = imgMine.src;
 document.querySelector('#imgFlagsId').src = imgFlag.src;
@@ -14,6 +15,7 @@ const world = new World();
 const resetBtn = document.querySelector("#resetGameId");
 resetBtn.addEventListener("click", () => {
   world.reSet();
+  hideHighScore();
 });
 
 let windowWidth = canvas.width;
