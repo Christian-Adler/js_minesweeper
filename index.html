@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Minesweeper</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+            font-family: Arial, serif;
+        }
+
+        html, body {
+            height: 100vh;
+            width: 100vw;
+            position: relative;
+        }
+
+        body {
+            background: rgb(2, 0, 36);
+            display: flex;
+            align-content: center;
+            align-items: center;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        canvas {
+            /*cursor: none;*/
+
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="canvas" height="500" width="500"></canvas>
+
+</body>
+<script src="js/main.mjs" type="module"></script>
+</html>
