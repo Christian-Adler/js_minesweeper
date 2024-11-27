@@ -2,6 +2,10 @@ import {Tile, tileWidth} from "./tile.mjs";
 import {Vector} from "./util/vector.mjs";
 import {getRandomIntInclusive} from "./util/utils.mjs";
 
+const displayNumMines = document.querySelector("#numMinesId");
+const displayNumFlags = document.querySelector("#numFlagsId");
+const overlay = document.querySelector("#overlay");
+
 const LITTLE = 0.1;
 const MEDIUM = 0.2;
 const A_LOT = 0.3;
@@ -21,6 +25,7 @@ class World {
     this.amountBombs = LITTLE;
 
     this.failed = false;
+    this.finished = false;
   }
 
   setWorldDimension(worldWidth, worldHeight) {
@@ -31,14 +36,16 @@ class World {
     this.yTilesCount = worldHeight / tileWidth;
 
     if (reset)
-      this.#reSet();
+      this.reSet();
   }
 
-  #reSet() {
+  reSet() {
     if (this.tiles.length > 0) {
       console.log('clear old game');
+      overlay.classList.remove('looser', 'winner');
       this.tiles = [];
       this.failed = false;
+      this.finished = false;
     }
     for (let y = 0; y < this.yTilesCount; y++) {
       for (let x = 0; x < this.xTilesCount; x++) {
@@ -47,7 +54,8 @@ class World {
       }
     }
 
-    this.numBombs = this.tiles.length * this.amountBombs;
+    this.numBombs = Math.floor(this.tiles.length * this.amountBombs);
+    displayNumMines.innerText = this.numBombs;
     for (let i = 0; i < this.numBombs; i++) {
       this.#placeRandomBomb();
     }
@@ -147,21 +155,20 @@ class World {
       tile.clicked = true;
       if (tile.bomb) {
         this.failed = true;
-        console.log('FAIL');
-      } // TODO
-
-
+        overlay.classList.add('looser');
+      } else if (this.tiles.length - this.#countClickedTiles() === this.numBombs) {
+        this.finished = true;
+        overlay.classList.add('winner');
+      }
     }
-    console.log('clicked', this.#countClickedTiles());
   }
 
   flagTile() {
     const tile = this.tileHovered;
-    if (tile) {
+    if (tile)
       tile.flagged = !tile.flagged;
-      this.numFlags += tile.flagged ? 1 : -1;
-      // console.log('num flags', this.numFlags);
-    }
+
+    displayNumFlags.innerText = this.#countFlaggedTiles();
   }
 
   #openAllNeighbors(tile) {
@@ -185,13 +192,7 @@ class World {
   }
 
   draw(ctx) {
-    // ctx.strokeStyle = 'red';
-    // ctx.lineWidth = 3;
-    // ctx.beginPath();
-    // ctx.rect(0, 0, this.width, this.height);
-    // ctx.stroke();
-
-    const forceShow = this.failed;
+    const forceShow = this.failed || this.finished;
     for (const tile of this.tiles) {
       tile.draw(ctx, forceShow, tile.equals(this.tileHovered), this.mouseDown);
     }

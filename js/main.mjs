@@ -1,11 +1,20 @@
 import {tileWidth} from "./tile.mjs";
 import World from "./world.mjs";
 import {Vector} from "./util/vector.mjs";
+import {imgFlag, imgMine} from "./mine.mjs";
+
+document.querySelector('#imgMinesId').src = imgMine.src;
+document.querySelector('#imgFlagsId').src = imgFlag.src;
 
 const canvas = document.querySelector("#canvas");
 const ctx = canvas.getContext('2d');
 
 const world = new World();
+
+const resetBtn = document.querySelector("#resetGameId");
+resetBtn.addEventListener("click", () => {
+  world.reSet();
+});
 
 let windowWidth = canvas.width;
 let windowHeight = canvas.height;
@@ -21,7 +30,7 @@ const updateWorldSettings = () => {
     windowWidth = window.innerWidth;
     windowHeight = window.innerHeight;
     const worldWidthWouldBe = windowWidth - windowWidth % tileWidth;
-    const worldHeightWouldBe = windowHeight - windowHeight % tileWidth;
+    const worldHeightWouldBe = windowHeight - 50 - (windowHeight - 50) % tileWidth;
     if (worldHeightWouldBe !== worldHeight || worldWidthWouldBe !== worldWidth) {
       worldWidth = worldWidthWouldBe;
       worldHeight = worldHeightWouldBe;

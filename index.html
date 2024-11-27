@@ -20,22 +20,112 @@
         body {
             background: rgb(2, 0, 36);
             display: flex;
-            align-content: center;
             align-items: center;
+            justify-content: space-between;
             flex-direction: column;
-            justify-content: center;
+        }
+
+        #cmdBar {
+            height: 50px;
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 10px;
+
+            & img {
+                height: 40px;
+                margin-left: 10px;
+            }
+
+            & .number {
+                font-size: 30px;
+                color: white;
+                font-family: monospace;
+            }
+
+            & .spacer {
+                flex: 1;
+            }
+
+            & #resetGameId {
+                display: inline-block;
+                transform: rotate(90deg);
+                margin-right: 10px;
+                cursor: pointer;
+                user-select: none;
+
+                &:hover {
+                    color: lightblue;
+                }
+            }
         }
 
         canvas {
             /*cursor: none;*/
             background: linear-gradient(302deg, rgba(52, 52, 121, 1) 0%, rgba(93, 188, 208, 1) 100%);
         }
+
+        #overlay {
+            position: fixed;
+            display: flex;
+            pointer-events: none;
+            height: 100vh;
+            width: 100vw;
+            flex-direction: column;
+            justify-content: center;
+            align-items: stretch;
+
+            & .overlayText {
+                font-size: 20vh;
+                height: 20vh;
+                font-family: Arial, sans-serif;
+                font-weight: bold;
+                opacity: 0;
+                transition: opacity 0.5s ease-in-out;
+                text-shadow: 5px 5px 1px #000000, 2px 2px 10px #000000;
+                text-align: center;
+            }
+
+            &.looser {
+                & .overlayText {
+                    opacity: 0.5;
+                    color: red;
+
+                    &::before {
+                        content: "LOOSER";
+                    }
+                }
+            }
+
+            &.winner {
+                & .overlayText {
+                    opacity: 0.5;
+                    color: lawngreen;
+
+                    &::before {
+                        content: "WINNER";
+                    }
+
+                }
+            }
+        }
     </style>
 </head>
 <body>
-
+<div id="cmdBar">
+    <img id="imgMinesId" src="" alt="mines">
+    <div id="numMinesId" class="number"></div>
+    <img id="imgFlagsId" src="" alt="flags">
+    <div id="numFlagsId" class="number"></div>
+    <div class="spacer"></div>
+    <div id="resetGameId" class="number">↻</div>
+</div>
 <canvas id="canvas" height="500" width="500"></canvas>
-
+<div id="overlay">
+    <div class="overlayText"></div>
+</div>
 </body>
 <script src="js/main.mjs" type="module"></script>
 </html>
