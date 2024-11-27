@@ -1,3 +1,5 @@
+import {imgMine} from "./mine.mjs";
+
 const tileWidth = 30;
 const tileWidth2 = tileWidth / 2;
 
@@ -48,36 +50,7 @@ class Tile {
   }
 
   #drawBomb(ctx) {
-    ctx.fillStyle = 'black';
-    ctx.strokeStyle = 'black';
-
-    ctx.lineWidth = 3;
-    ctx.lineCap = "round";
-    ctx.beginPath();
-    ctx.moveTo(this.pos.x * tileWidth + tileWidth2, this.pos.y * tileWidth + 3);
-    ctx.lineTo(this.pos.x * tileWidth + tileWidth2, this.pos.y * tileWidth + tileWidth - 3);
-    ctx.moveTo(this.pos.x * tileWidth + 3, this.pos.y * tileWidth + tileWidth2);
-    ctx.lineTo(this.pos.x * tileWidth + tileWidth - 3, this.pos.y * tileWidth + tileWidth2);
-    ctx.moveTo(this.pos.x * tileWidth + 6, this.pos.y * tileWidth + 6);
-    ctx.lineTo(this.pos.x * tileWidth + tileWidth - 6, this.pos.y * tileWidth + tileWidth - 6);
-    ctx.moveTo(this.pos.x * tileWidth + 6, this.pos.y * tileWidth + tileWidth - 6);
-    ctx.lineTo(this.pos.x * tileWidth + tileWidth - 6, this.pos.y * tileWidth + 6);
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.arc(this.pos.x * tileWidth + tileWidth2, this.pos.y * tileWidth + tileWidth2, tileWidth / 2.8, 0, Math.PI * 2);
-    ctx.fill();
-
-    // shimmer
-    const factor = 3 / 8;
-    const grad = ctx.createRadialGradient(this.pos.x * tileWidth + tileWidth * factor, this.pos.y * tileWidth + tileWidth * factor, 0, this.pos.x * tileWidth + tileWidth * factor, this.pos.y * tileWidth + tileWidth * factor, tileWidth / 5);
-
-    grad.addColorStop(0, 'rgba(255, 255, 255, 1)');
-    grad.addColorStop(1, 'rgba(0, 0, 0, 1)');
-
-    ctx.fillStyle = grad;
-    ctx.arc(this.pos.x * tileWidth + tileWidth * factor, this.pos.y * tileWidth + tileWidth * factor, tileWidth / 5, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.drawImage(imgMine, this.pos.x * tileWidth, this.pos.y * tileWidth, tileWidth, tileWidth);
   }
 
   drawBackground(ctx, color, ext) {

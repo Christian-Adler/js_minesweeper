@@ -17,12 +17,12 @@ let canvasBoundingClientRect = canvas.getBoundingClientRect();
 let worldUpdated = true;
 
 const updateWorldSettings = () => {
-  if (windowHeight !== window.innerHeight || windowWidth !== window.innerWidth || force) {
+  if (windowHeight !== window.innerHeight || windowWidth !== window.innerWidth) {
     windowWidth = window.innerWidth;
     windowHeight = window.innerHeight;
     const worldWidthWouldBe = windowWidth - windowWidth % tileWidth;
     const worldHeightWouldBe = windowHeight - windowHeight % tileWidth;
-    if (worldHeightWouldBe !== worldHeight || worldWidthWouldBe !== worldWidth || force) {
+    if (worldHeightWouldBe !== worldHeight || worldWidthWouldBe !== worldWidth) {
       worldWidth = worldWidthWouldBe;
       worldHeight = worldHeightWouldBe;
       worldWidth2 = worldWidth / 2;
