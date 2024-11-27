@@ -158,8 +158,8 @@ class World {
   flagTile() {
     const tile = this.tileHovered;
     if (tile) {
-      tile.flaged = !tile.flaged;
-      this.numFlags += tile.flaged ? 1 : -1;
+      tile.flagged = !tile.flagged;
+      this.numFlags += tile.flagged ? 1 : -1;
       // console.log('num flags', this.numFlags);
     }
   }
